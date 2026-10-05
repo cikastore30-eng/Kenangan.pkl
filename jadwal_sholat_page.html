@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>JADWAL SHOLAT</title>
+<title>JAM SHOLAT</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ═══════════════════════════════════════════════════════════
@@ -388,7 +388,7 @@
     <button class="back-btn" id="backBtn" title="Kembali">
       <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
     </button>
-    <div class="appbar-title">JADWAL SHOLAT</div>
+    <div class="appbar-title">JAM SHOLAT</div>
     <div class="appbar-spacer"></div>
   </div>
 
@@ -526,8 +526,8 @@ function renderEmpty() {
   content.innerHTML = `
     <div class="empty-state">
       <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
-      <h3>Cari Jadwal Sholat</h3>
-      <p>Masukkan nama kota untuk melihat jadwal sholat hari ini.</p>
+      <h3>Cari Jam Sholat</h3>
+      <p>Masukkan nama kota untuk melihat jam sholat hari ini.</p>
       <div class="chip-row">
         <div class="chip" data-city="Jakarta">Jakarta</div>
         <div class="chip" data-city="Bandung">Bandung</div>
@@ -567,7 +567,7 @@ function renderError(msg) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RENDER: JADWAL SHOLAT
+   RENDER: JAM SHOLAT
    ═══════════════════════════════════════════════════════════ */
 function renderJadwal(data) {
   const waktu = data.waktu || {};
@@ -617,7 +617,7 @@ function renderJadwal(data) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   FETCH JADWAL SHOLAT
+   FETCH JAM SHOLAT
    ═══════════════════════════════════════════════════════════ */
 async function fetchJadwalSholat() {
   const city = cityInput.value.trim();
