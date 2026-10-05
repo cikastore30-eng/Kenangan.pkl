@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>JADWAL SHOLAT</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════════════════════════
+     TEMA (menyesuaikan ThemeProvider di Flutter)
+     ═══════════════════════════════════════════════════════════ */
+  :root {
+    --primary-color: #22C55E;       /* hijau utama */
+    --accent-color: #16A34A;        /* hijau lebih gelap */
+    --background-color: #0B1220;    /* background gelap */
+    --glass-primary: rgba(255, 255, 255, 0.04);
+    --glass-secondary: rgba(255, 255, 255, 0.07);
+    --text-primary: #FFFFFF;
+    --text-secondary: #94A3B8;
+    --danger: #EF4444;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--background-color);
+    color: var(--text-primary);
+    font-family: 'Poppins', 'Rajdhani', sans-serif;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     APP CONTAINER
+     ═══════════════════════════════════════════════════════════ */
+  .app {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(ellipse at top left, rgba(34,197,94,0.15) 0%, #0B1220 40%, #0B1220 100%);
+    overflow: hidden;
+  }
+
+  /* Grid background (dari _GridPainter) */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.9;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     APP BAR
+     ═══════════════════════════════════════════════════════════ */
+  .appbar {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 10px;
+    flex-shrink: 0;
+  }
+
+  .back-btn {
+    width: 42px; height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-secondary);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.12); }
+  .back-btn svg { width: 18px; height: 18px; fill: var(--primary-color); }
+
+  .appbar-title {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border-radius: 24px;
+    box-shadow: 0 0 10px rgba(34,197,94,0.3);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  .appbar-spacer {
+    width: 42px;
+    height: 42px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     SCROLL AREA
+     ═══════════════════════════════════════════════════════════ */
+  .scroll-area {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(34,197,94,0.4) transparent;
+  }
+  .scroll-area::-webkit-scrollbar { width: 6px; }
+  .scroll-area::-webkit-scrollbar-thumb { background: rgba(34,197,94,0.4); border-radius: 3px; }
+
+  /* ═══════════════════════════════════════════════════════════
+     SEARCH BAR
+     ═══════════════════════════════════════════════════════════ */
+  .search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 14px;
+    background: var(--glass-secondary);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    transition: border-color 0.2s;
+  }
+  .search-wrap:focus-within {
+    border-color: rgba(34,197,94,0.5);
+  }
+  .search-wrap svg.search-icon {
+    width: 20px; height: 20px;
+    fill: var(--primary-color);
+    flex-shrink: 0;
+  }
+  .search-wrap input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 15px;
+    padding: 14px 0;
+  }
+  .search-wrap input::placeholder {
+    color: rgba(148,163,184,0.5);
+  }
+  .send-btn {
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.2s;
+  }
+  .send-btn:hover { background: rgba(34,197,94,0.15); }
+  .send-btn svg { width: 22px; height: 22px; fill: var(--primary-color); }
+
+  /* ═══════════════════════════════════════════════════════════
+     LOADING
+     ═══════════════════════════════════════════════════════════ */
+  .loader {
+    display: flex;
+    justify-content: center;
+    padding: 30px 0;
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid rgba(34,197,94,0.25);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ═══════════════════════════════════════════════════════════
+     ERROR BOX
+     ═══════════════════════════════════════════════════════════ */
+  .error-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 16px;
+    color: #FCA5A5;
+    font-size: 14px;
+  }
+  .error-box svg {
+    width: 22px; height: 22px;
+    fill: var(--danger);
+    flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     LOCATION CARD
+     ═══════════════════════════════════════════════════════════ */
+  .location-card {
+    padding: 20px;
+    background: var(--glass-primary);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .mosque-icon {
+    width: 44px; height: 44px;
+    fill: var(--primary-color);
+  }
+  .location-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .date-chip {
+    padding: 4px 14px;
+    background: var(--glass-secondary);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .hijri-text {
+    font-size: 12px;
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     SECTION TITLE
+     ═══════════════════════════════════════════════════════════ */
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     PRAYER GRID
+     ═══════════════════════════════════════════════════════════ */
+  .prayer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .prayer-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--glass-primary);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    transition: all 0.25s ease;
+  }
+  .prayer-card:hover {
+    border-color: rgba(34,197,94,0.4);
+    transform: translateY(-2px);
+  }
+
+  .prayer-icon {
+    width: 34px; height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+  .prayer-icon svg {
+    width: 18px; height: 18px;
+    fill: #fff;
+  }
+
+  .prayer-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .prayer-time {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary-color);
+    flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     INFO NOTE
+     ═══════════════════════════════════════════════════════════ */
+  .info-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--glass-secondary);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .info-note svg {
+    width: 16px; height: 16px;
+    fill: var(--primary-color);
+    flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     WELCOME / EMPTY STATE
+     ═══════════════════════════════════════════════════════════ */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .empty-state svg {
+    width: 90px; height: 90px;
+    fill: rgba(34,197,94,0.25);
+  }
+  .empty-state h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .empty-state p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    max-width: 260px;
+    line-height: 1.5;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     SUGGESTION CHIPS
+     ═══════════════════════════════════════════════════════════ */
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    justify-content: center;
+  }
+  .chip {
+    padding: 6px 14px;
+    background: var(--glass-secondary);
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .chip:hover { background: rgba(34,197,94,0.15); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Grid background -->
+  <svg class="grid-bg" id="gridBg" preserveAspectRatio="none"></svg>
+
+  <!-- APP BAR -->
+  <div class="appbar">
+    <button class="back-btn" id="backBtn" title="Kembali">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    </button>
+    <div class="appbar-title">JADWAL SHOLAT</div>
+    <div class="appbar-spacer"></div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- SEARCH BAR -->
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+      <input type="text" id="cityInput" placeholder="Cari kota..." autocomplete="off" />
+      <button class="send-btn" id="sendBtn" title="Cari">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="content" style="margin-top: 24px;"></div>
+
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   KONFIGURASI
+   ═══════════════════════════════════════════════════════════ */
+const API_URL = "https://api.deline.web.id/info/jadwalsholat?kota=";
+
+/* ═══════════════════════════════════════════════════════════
+   DOM
+   ═══════════════════════════════════════════════════════════ */
+const $ = (id) => document.getElementById(id);
+const cityInput = $('cityInput');
+const sendBtn = $('sendBtn');
+const content = $('content');
+const gridBg = $('gridBg');
+const backBtn = $('backBtn');
+
+/* ═══════════════════════════════════════════════════════════
+   GRID BACKGROUND (mirip _GridPainter)
+   ═══════════════════════════════════════════════════════════ */
+function drawGrid() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  gridBg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  gridBg.setAttribute('width', w);
+  gridBg.setAttribute('height', h);
+
+  const gridSize = 30;
+  let svg = '';
+
+  // Garis tipis putih
+  for (let x = 0; x <= w; x += gridSize) {
+    svg += `<line x1="${x}" y1="0" x2="${x}" y2="${h}" stroke="rgba(255,255,255,0.02)" stroke-width="0.8"/>`;
+  }
+  for (let y = 0; y <= h; y += gridSize) {
+    svg += `<line x1="0" y1="${y}" x2="${w}" y2="${y}" stroke="rgba(255,255,255,0.02)" stroke-width="0.8"/>`;
+  }
+
+  // Garis aksen hijau tiap 5 grid
+  for (let x = 0; x <= w; x += gridSize * 5) {
+    svg += `<line x1="${x}" y1="0" x2="${x}" y2="${h}" stroke="rgba(34,197,94,0.08)" stroke-width="1.5"/>`;
+  }
+  for (let y = 0; y <= h; y += gridSize * 5) {
+    svg += `<line x1="0" y1="${y}" x2="${w}" y2="${y}" stroke="rgba(34,197,94,0.08)" stroke-width="1.5"/>`;
+  }
+
+  // Titik-titik
+  for (let x = 0; x <= w; x += gridSize) {
+    for (let y = 0; y <= h; y += gridSize) {
+      svg += `<circle cx="${x}" cy="${y}" r="1.5" fill="rgba(34,197,94,0.10)"/>`;
+    }
+  }
+
+  gridBg.innerHTML = svg;
+}
+drawGrid();
+window.addEventListener('resize', drawGrid);
+
+/* ═══════════════════════════════════════════════════════════
+   ICON MAPPING (dari _getSholatIcon di Dart)
+   ═══════════════════════════════════════════════════════════ */
+function getSholatIcon(name) {
+  // Kita pakai path SVG Material Icons yang mirip dengan Dart
+  const paths = {
+    'Imsak':      'M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z',
+    'Fajr':       'M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5 2.39 3.42-4.78.01L12 2zm0 20-2.39-3.42 4.78-.01L12 22z',
+    'Sunrise':    'M12 5l1.5 2.5L12 9 10.5 7.5 12 5zm-7 9a7 7 0 1 1 14 0h-2a5 5 0 1 0-10 0H5zm-3 2h18v2H2v-2z',
+    'Dhuhr':      'M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-2V2m0 20v-3m7-7h3M2 12h3m12.95-4.95 2.12-2.12M3.93 20.07l2.12-2.12m0-11.9L3.93 3.93m16.14 16.14-2.12-2.12',
+    'Asr':        'M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v3m0 14v3M4.22 4.22l2.12 2.12m11.32 11.32 2.12 2.12M2 12h3m14 0h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12',
+    'Sunset':     'M12 19l-1.5-2.5L12 14l1.5 2.5L12 19zm7-9a7 7 0 1 0-14 0h2a5 5 0 1 1 10 0h2zm3 4H2v2h18v-2z',
+    'Maghrib':    'M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z',
+    'Isha':       'M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z',
+    'Midnight':   'M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z',
+    'Firstthird': 'M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z',
+    'Lastthird':  'M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z',
+    'default':    'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z'
+  };
+  return paths[name] || paths['default'];
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FORMAT NAMA SHOLAT (dari _formatSholatName)
+   ═══════════════════════════════════════════════════════════ */
+function formatSholatName(name) {
+  const map = {
+    'Fajr': 'Subuh',
+    'Sunrise': 'Terbit',
+    'Dhuhr': 'Dzuhur',
+    'Asr': 'Ashar',
+    'Sunset': 'Terbenam',
+    'Maghrib': 'Maghrib',
+    'Isha': 'Isya',
+    'Imsak': 'Imsak',
+    'Midnight': 'Tengah Malam',
+    'Firstthird': 'Sepertiga Malam',
+    'Lastthird': 'Sepertiga Akhir',
+  };
+  return map[name] || name;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ESCAPE HTML
+   ═══════════════════════════════════════════════════════════ */
+function esc(str) {
+  return String(str || '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: EMPTY STATE
+   ═══════════════════════════════════════════════════════════ */
+function renderEmpty() {
+  content.innerHTML = `
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+      <h3>Cari Jadwal Sholat</h3>
+      <p>Masukkan nama kota untuk melihat jadwal sholat hari ini.</p>
+      <div class="chip-row">
+        <div class="chip" data-city="Jakarta">Jakarta</div>
+        <div class="chip" data-city="Bandung">Bandung</div>
+        <div class="chip" data-city="Surabaya">Surabaya</div>
+        <div class="chip" data-city="Medan">Medan</div>
+        <div class="chip" data-city="Yogyakarta">Yogyakarta</div>
+        <div class="chip" data-city="Makassar">Makassar</div>
+      </div>
+    </div>
+  `;
+  // Bind chip
+  content.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      cityInput.value = chip.dataset.city;
+      fetchJadwalSholat();
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: LOADING
+   ═══════════════════════════════════════════════════════════ */
+function renderLoading() {
+  content.innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: ERROR
+   ═══════════════════════════════════════════════════════════ */
+function renderError(msg) {
+  content.innerHTML = `
+    <div class="error-box">
+      <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm1 16h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      <div>${esc(msg)}</div>
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: JADWAL SHOLAT
+   ═══════════════════════════════════════════════════════════ */
+function renderJadwal(data) {
+  const waktu = data.waktu || {};
+  const order = ['Imsak', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Sunset', 'Maghrib', 'Isha', 'Midnight'];
+
+  // Card lokasi
+  const locationCard = `
+    <div class="location-card">
+      <svg class="mosque-icon" viewBox="0 0 24 24"><path d="M12 2 8 5v2H6v11h4v-5h4v5h4V7h-2V5l-4-3zM8 9h2v2H8V9zm6 0h2v2h-2V9z"/></svg>
+      <div class="location-name">${esc(data.lokasi || 'Tidak diketahui')}</div>
+      <div class="date-chip">${esc(data.tanggal || '')}</div>
+      ${data.hijri ? `<div class="hijri-text">${esc(data.hijri)}</div>` : ''}
+    </div>
+  `;
+
+  // Prayer grid
+  let gridHTML = '';
+  order.forEach(key => {
+    if (waktu[key] !== undefined) {
+      const iconPath = getSholatIcon(key);
+      gridHTML += `
+        <div class="prayer-card">
+          <div class="prayer-icon">
+            <svg viewBox="0 0 24 24"><path d="${iconPath}"/></svg>
+          </div>
+          <div class="prayer-name">${esc(formatSholatName(key))}</div>
+          <div class="prayer-time">${esc(waktu[key])}</div>
+        </div>
+      `;
+    }
+  });
+
+  // Info note
+  const noteHTML = `
+    <div class="info-note">
+      <svg viewBox="0 0 24 24"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+      <div>Jadwal sholat berdasarkan lokasi yang dipilih</div>
+    </div>
+  `;
+
+  content.innerHTML = `
+    ${locationCard}
+    <div class="section-title">Waktu Sholat</div>
+    <div class="prayer-grid">${gridHTML}</div>
+    ${noteHTML}
+  `;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FETCH JADWAL SHOLAT
+   ═══════════════════════════════════════════════════════════ */
+async function fetchJadwalSholat() {
+  const city = cityInput.value.trim();
+  if (!city) {
+    renderError('Masukkan nama kota');
+    return;
+  }
+
+  renderLoading();
+
+  try {
+    const res = await fetch(API_URL + encodeURIComponent(city));
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    if (data.status === true && data.result) {
+      renderJadwal(data.result);
+    } else {
+      renderError('Kota tidak ditemukan');
+    }
+  } catch (e) {
+    console.error('Fetch error:', e);
+    renderError('Koneksi gagal: ' + e.message);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EVENT LISTENERS
+   ═══════════════════════════════════════════════════════════ */
+sendBtn.addEventListener('click', fetchJadwalSholat);
+cityInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    fetchJadwalSholat();
+  }
+});
+backBtn.addEventListener('click', () => history.back());
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════ */
+renderEmpty();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>MUSIC - VOID ENGINE</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c-blue: #29B6F6;
+    --c-blue-dark: #0D47A1;
+    --c-bg: #141820;
+    --c-bg-card: #1C2230;
+    --c-bg-sidebar: #1A1F2C;
+    --font: 'Rajdhani', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; font-family:var(--font); -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; background:var(--c-bg); color:#fff; overflow:hidden; }
+
+  .app {
+    position:relative; width:100%; height:100vh;
+    display:flex; flex-direction:column;
+    background: linear-gradient(135deg, #141820 0%, #0E1118 50%, #141820 100%);
+    overflow:hidden;
+  }
+  .hex-bg { position:absolute; pointer-events:none; z-index:0; opacity:0.12; }
+  .hex-bg.tl { top:-40px; left:-40px; }
+  .hex-bg.br { bottom:-50px; right:-50px; opacity:0.10; }
+
+  .header {
+    position:relative; z-index:2; display:flex; align-items:center;
+    padding:14px 16px 10px; gap:12px; flex-shrink:0;
+  }
+  .back-btn {
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+    background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+    border-radius:10px; cursor:pointer; flex-shrink:0;
+  }
+  .back-btn svg { width:22px; height:22px; fill:#fff; }
+  .logo-icon {
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(135deg, var(--c-blue-dark), var(--c-blue));
+    border-radius:10px; box-shadow: 0 0 12px rgba(41,182,246,0.55); flex-shrink:0;
+  }
+  .logo-icon svg { width:22px; height:22px; fill:#fff; }
+  .header-text { flex:1; min-width:0; }
+  .header-text h1 { font-size:18px; font-weight:900; letter-spacing:2.5px; color:#fff; line-height:1.1; }
+  .header-text p { font-size:11px; color: rgba(255,255,255,0.55); margin-top:2px; }
+  .refresh-btn {
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+    background: rgba(41,182,246,0.14); border:1px solid rgba(41,182,246,0.35);
+    border-radius:10px; cursor:pointer; flex-shrink:0;
+  }
+  .refresh-btn svg { width:20px; height:20px; fill: var(--c-blue); }
+  .refresh-btn.spinning svg { animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .search-wrap {
+    position:relative; z-index:2; margin:6px 16px 14px; padding:4px 14px;
+    display:flex; align-items:center; gap:10px;
+    background: var(--c-bg-card); border:1px solid rgba(41,182,246,0.30);
+    border-radius:14px;
+    box-shadow: 0 0 14px rgba(41,182,246,0.10), 0 8px 20px rgba(0,0,0,0.4);
+    flex-shrink:0;
+  }
+  .search-wrap svg.search-icon { width:22px; height:22px; fill: var(--c-blue); flex-shrink:0; }
+  .search-wrap input {
+    flex:1; background:transparent; border:none; outline:none; color:#fff;
+    font-size:14.5px; font-family:var(--font); padding:10px 0;
+  }
+  .search-wrap input::placeholder { color: rgba(255,255,255,0.38); font-size:13.5px; }
+  .clear-btn {
+    width:28px; height:28px; display:none; align-items:center; justify-content:center;
+    background:transparent; border:none; cursor:pointer; border-radius:50%;
+  }
+  .clear-btn svg { width:18px; height:18px; fill: rgba(255,255,255,0.6); }
+  .clear-btn.show { display:flex; }
+
+  .scroll {
+    position:relative; z-index:1; flex:1; overflow-y:auto;
+    padding-bottom:130px; scrollbar-width:thin;
+    scrollbar-color: rgba(41,182,246,0.4) transparent;
+  }
+  .scroll::-webkit-scrollbar { width:6px; }
+  .scroll::-webkit-scrollbar-thumb { background: rgba(41,182,246,0.4); border-radius:3px; }
+
+  .sec-header {
+    display:flex; align-items:center; padding:6px 16px 0; gap:10px; margin-top:8px;
+  }
+  .sec-icon {
+    padding:6px; display:flex; align-items:center; justify-content:center;
+    border-radius:8px; flex-shrink:0;
+  }
+  .sec-icon svg { width:16px; height:16px; fill: currentColor; }
+  .sec-title { font-size:15px; font-weight:900; letter-spacing:1.6px; color:#fff; }
+  .sec-badge {
+    margin-left:auto; padding:3px 8px;
+    background: rgba(41,182,246,0.16); border:1px solid rgba(41,182,246,0.4);
+    border-radius:10px; color: var(--c-blue); font-size:11px; font-weight:900;
+  }
+
+  .track-list { display:flex; flex-direction:column; gap:10px; padding:10px 16px 6px; }
+
+  .track-card {
+    display:flex; align-items:center; gap:12px; padding:10px;
+    background: var(--c-bg-card); border:1px solid rgba(255,255,255,0.06);
+    border-radius:16px; cursor:pointer; transition:all 0.22s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.45); position:relative;
+    -webkit-user-select:none; user-select:none;
+  }
+  .track-card:active { transform: scale(0.98); }
+  .track-card.active {
+    background: linear-gradient(135deg, rgba(13,71,161,0.55), var(--c-bg-card));
+    border-color: rgba(41,182,246,0.65);
+    box-shadow: 0 0 18px rgba(41,182,246,0.30), 0 4px 10px rgba(0,0,0,0.5);
+  }
+
+  .thumb-wrap {
+    position:relative; width:64px; height:64px; border-radius:12px;
+    overflow:hidden; flex-shrink:0; background: var(--c-bg-sidebar);
+  }
+  .thumb-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb-fallback {
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    background: var(--c-bg-sidebar);
+  }
+  .thumb-fallback svg { width:28px; height:28px; fill: rgba(255,255,255,0.24); }
+  .thumb-overlay {
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+    background: rgba(0,0,0,0.45);
+  }
+  .track-card.active .thumb-overlay { display:flex; }
+  .thumb-overlay svg { width:26px; height:26px; fill: var(--c-blue); }
+
+  .track-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .track-title {
+    font-size:14px; font-weight:800; color:#fff;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .track-card.active .track-title { color: var(--c-blue); }
+  .track-artist {
+    font-size:12px; color: rgba(255,255,255,0.7);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .track-meta {
+    display:flex; align-items:center; gap:8px; font-size:10.5px;
+    color: rgba(255,255,255,0.54); margin-top:2px;
+  }
+  .track-meta svg { width:11px; height:11px; fill: rgba(255,255,255,0.38); flex-shrink:0; }
+  .track-meta .dot { width:3px; height:3px; border-radius:50%; background: rgba(255,255,255,0.24); }
+  .track-meta .album { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .play-btn {
+    width:44px; height:44px; border-radius:50%;
+    background: linear-gradient(135deg, var(--c-blue-dark), var(--c-blue));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 0 12px rgba(41,182,246,0.55);
+    flex-shrink:0; cursor:pointer; border:none;
+  }
+  .play-btn svg { width:24px; height:24px; fill:#fff; }
+
+  .status {
+    text-align:center; padding:24px 16px;
+    color: rgba(255,255,255,0.55); font-size:13px;
+  }
+  .status .spinner {
+    width:28px; height:28px; border:2.5px solid rgba(41,182,246,0.25);
+    border-top-color: var(--c-blue); border-radius:50%; margin:0 auto 10px;
+    animation: spin 0.9s linear infinite;
+  }
+  .error-box {
+    margin:14px 16px; padding:14px; background: rgba(255,0,0,0.08);
+    border:1px solid rgba(255,0,0,0.4); border-radius:12px; color:#fff;
+    font-size:12.5px; display:flex; align-items:center; gap:10px;
+  }
+  .error-box svg { width:20px; height:20px; fill:#ff5252; flex-shrink:0; }
+  .error-box button {
+    margin-left:auto; padding:6px 12px; background:transparent;
+    border:1px solid var(--c-blue); border-radius:8px;
+    color: var(--c-blue); font-size:11px; cursor:pointer; font-family:var(--font);
+  }
+
+  .mini {
+    position:absolute; left:0; right:0; bottom:0; z-index:10;
+    background: rgba(26,31,44,0.92);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-top:1.2px solid rgba(41,182,246,0.4);
+    box-shadow: 0 0 18px rgba(41,182,246,0.20), 0 -10px 20px rgba(0,0,0,0.5);
+    border-top-left-radius:20px; border-top-right-radius:20px;
+    padding:10px 12px 14px;
+    transform: translateY(120%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mini.show { transform: translateY(0); }
+
+  .mini-row { display:flex; align-items:center; gap:10px; }
+  .mini-thumb {
+    width:42px; height:42px; border-radius:8px; object-fit:cover;
+    background: var(--c-bg-card); flex-shrink:0;
+  }
+  .mini-thumb-fallback {
+    width:42px; height:42px; border-radius:8px; background: var(--c-bg-card);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .mini-thumb-fallback svg { width:20px; height:20px; fill: rgba(255,255,255,0.24); }
+  .mini-info { flex:1; min-width:0; }
+  .mini-title {
+    font-size:13px; font-weight:800; color:#fff;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .mini-artist {
+    font-size:11px; color: rgba(255,255,255,0.6);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px;
+  }
+  .mini-btn {
+    width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+    background:transparent; border:none; cursor:pointer; border-radius:50%; flex-shrink:0;
+  }
+  .mini-btn svg { width:34px; height:34px; fill: var(--c-blue); }
+  .mini-btn.close svg { width:22px; height:22px; fill: rgba(255,255,255,0.6); }
+
+  .prog-wrap {
+    margin-top:8px; height:3px; background: rgba(255,255,255,0.12);
+    border-radius:4px; overflow:hidden; cursor:pointer;
+  }
+  .prog-bar { height:100%; width:0%; background: var(--c-blue); border-radius:4px; }
+  .time-row {
+    display:flex; justify-content:space-between; margin-top:4px;
+    font-size:10px; color: rgba(255,255,255,0.6);
+  }
+
+  .toast {
+    position:fixed; bottom:100px; left:50%; transform: translateX(-50%);
+    background: var(--c-bg-card); color:#fff; padding:10px 18px;
+    border-radius:10px; font-size:13px; z-index:9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    border:1px solid rgba(41,182,246,0.4); max-width:90%; text-align:center;
+  }
+
+  /* Banner unlock audio */
+  .unlock-banner {
+    position:fixed; top:0; left:0; right:0; z-index:9998;
+    background: linear-gradient(90deg, #0D47A1, #29B6F6);
+    color:#fff; padding:12px 16px; font-size:13px; font-weight:600;
+    text-align:center; cursor:pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .unlock-banner svg { width:20px; height:20px; fill:#fff; }
+  .unlock-banner.hidden { display:none; }
+</style>
+</head>
+<body>
+
+<!-- Banner unlock audio (hilang setelah user klik) -->
+<div class="unlock-banner" id="unlockBanner">
+  <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05A4.5 4.5 0 0 0 16.5 12zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+  Ketuk di sini untuk aktifkan pemutar musik
+</div>
+
+<div class="app">
+  <svg class="hex-bg tl" width="220" height="220" viewBox="0 0 220 220"></svg>
+  <svg class="hex-bg br" width="260" height="260" viewBox="0 0 260 260"></svg>
+
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    </button>
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+    </div>
+    <div class="header-text">
+      <h1>MUSIC</h1>
+      <p>Cari &amp; putar musik favoritmu</p>
+    </div>
+    <button class="refresh-btn" id="refreshBtn">
+      <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+    </button>
+  </div>
+
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+    <input type="text" id="searchInput" placeholder="Cari judul lagu, artis, atau album..." autocomplete="off">
+    <button class="clear-btn" id="clearBtn">
+      <svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+  </div>
+
+  <div class="scroll" id="scrollArea">
+    <div id="searchSection" style="display:none;">
+      <div class="sec-header">
+        <div class="sec-icon" style="background:rgba(41,182,246,0.16); border:1px solid rgba(41,182,246,0.4); color:var(--c-blue);">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5z"/></svg>
+        </div>
+        <div class="sec-title">HASIL PENCARIAN</div>
+        <div class="sec-badge" id="searchCount">0</div>
+      </div>
+      <div class="track-list" id="searchList"></div>
+    </div>
+
+    <div id="topSection">
+      <div class="sec-header">
+        <div class="sec-icon" style="background:rgba(255,167,38,0.16); border:1px solid rgba(255,167,38,0.4); color:#ffa726;">
+          <svg viewBox="0 0 24 24"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
+        </div>
+        <div class="sec-title">MUSIC TERPOPULER</div>
+        <div class="sec-badge" id="topCount">0</div>
+      </div>
+      <div class="track-list" id="topList">
+        <div class="status"><div class="spinner"></div>Memuat...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mini" id="miniPlayer">
+    <div class="mini-row">
+      <div id="miniCoverWrap"></div>
+      <div class="mini-info">
+        <div class="mini-title" id="miniTitle">-</div>
+        <div class="mini-artist" id="miniArtist">-</div>
+      </div>
+      <button class="mini-btn" id="miniPlayPause">
+        <svg id="miniPlayIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="miniPauseIcon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button class="mini-btn close" id="miniClose">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="prog-wrap" id="progressWrap">
+      <div class="prog-bar" id="progressBar"></div>
+    </div>
+    <div class="time-row">
+      <span id="curTime">0:00</span>
+      <span id="durTime">0:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- Audio element dengan crossOrigin untuk bypass CORS audio -->
+<audio id="audio" preload="auto" crossorigin="anonymous"></audio>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   AUDIO UNLOCK — Atasi autoplay policy browser Android
+   ═══════════════════════════════════════════════════════════ */
+const audio = document.getElementById('audio');
+const unlockBanner = document.getElementById('unlockBanner');
+let audioUnlocked = false;
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+  // Putar audio kosong untuk "unlock" pemutar
+  audio.play().then(() => {
+    audio.pause();
+    audio.currentTime = 0;
+    audioUnlocked = true;
+    unlockBanner.classList.add('hidden');
+    console.log('[Audio] Unlocked ✅');
+  }).catch(err => {
+    // Bahkan play() kosong bisa gagal, tapi user gesture tetap terdaftar
+    audioUnlocked = true;
+    unlockBanner.classList.add('hidden');
+    console.log('[Audio] Unlock attempt (may need real track)');
+  });
+}
+
+unlockBanner.addEventListener('click', unlockAudio);
+// Unlock juga saat user klik apa pun
+document.addEventListener('touchstart', unlockAudio, { once: true });
+document.addEventListener('click', unlockAudio, { once: true });
+
+/* ═══════════════════════════════════════════════════════════
+   KONFIGURASI
+   ═══════════════════════════════════════════════════════════ */
+const ITUNES_SEARCH = "https://itunes.apple.com/search";
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════ */
+let searchResults = [];
+let topTracks = [];
+let currentTrack = null;
+let currentlyPlayingId = null;
+let isPlaying = false;
+let debounceTimer = null;
+
+/* ═══════════════════════════════════════════════════════════
+   DOM
+   ═══════════════════════════════════════════════════════════ */
+const $ = (id) => document.getElementById(id);
+const searchInput = $('searchInput');
+const clearBtn = $('clearBtn');
+const refreshBtn = $('refreshBtn');
+const searchSection = $('searchSection');
+const searchList = $('searchList');
+const searchCount = $('searchCount');
+const topList = $('topList');
+const topCount = $('topCount');
+const miniPlayer = $('miniPlayer');
+const miniCoverWrap = $('miniCoverWrap');
+const miniTitle = $('miniTitle');
+const miniArtist = $('miniArtist');
+const miniPlayPause = $('miniPlayPause');
+const miniPlayIcon = $('miniPlayIcon');
+const miniPauseIcon = $('miniPauseIcon');
+const miniClose = $('miniClose');
+const progressWrap = $('progressWrap');
+const progressBar = $('progressBar');
+const curTimeEl = $('curTime');
+const durTimeEl = $('durTime');
+
+/* ═══════════════════════════════════════════════════════════
+   HEX PATTERN
+   ═══════════════════════════════════════════════════════════ */
+function drawHexPattern(svgEl, size, color) {
+  const r = 16;
+  const w = Math.sqrt(3) * r;
+  const h = 2 * r;
+  const vert = h * 3 / 4;
+  let paths = '';
+  let rowIdx = 0;
+  for (let y = -h; y < size + h; y += vert) {
+    const offset = (rowIdx % 2) === 1;
+    for (let x = -w; x < size + w; x += w) {
+      const cx = x + (offset ? w/2 : 0);
+      let d = '';
+      for (let i = 0; i < 6; i++) {
+        const a = (Math.PI / 3) * i + Math.PI / 6;
+        const px = cx + r * Math.cos(a);
+        const py = y + r * Math.sin(a);
+        d += (i === 0 ? 'M' : 'L') + px.toFixed(2) + ',' + py.toFixed(2) + ' ';
+      }
+      d += 'Z';
+      paths += `<path d="${d}" fill="none" stroke="${color}" stroke-width="1"/>`;
+    }
+    rowIdx++;
+  }
+  svgEl.innerHTML = paths;
+}
+document.querySelectorAll('.hex-bg').forEach(el => {
+  const size = parseFloat(el.getAttribute('width'));
+  drawHexPattern(el, size, 'rgba(41,182,246,0.9)');
+});
+
+/* ═══════════════════════════════════════════════════════════
+   UTIL
+   ═══════════════════════════════════════════════════════════ */
+function fmtSec(sec) {
+  if (!sec || sec <= 0 || isNaN(sec)) return '0:00';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+function fmtMs(ms) { return fmtSec(ms / 1000); }
+function esc(str) {
+  return String(str || '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAPPING TRACK
+   ═══════════════════════════════════════════════════════════ */
+function mapTrack(item) {
+  return {
+    id: String(item.trackId || item.collectionId || Math.random()),
+    title: item.trackName || item.collectionName || '',
+    artist: item.artistName || '',
+    album: item.collectionName || '',
+    thumbnail: (item.artworkUrl100 || '').replace('100x100bb', '300x300bb'),
+    previewUrl: item.previewUrl || '',
+    duration: Math.floor((item.trackTimeMillis || 0) / 1000),
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FETCH TOP TRACKS
+   ═══════════════════════════════════════════════════════════ */
+async function fetchTopTracks() {
+  refreshBtn.classList.add('spinning');
+  topList.innerHTML = `<div class="status"><div class="spinner"></div>Memuat...</div>`;
+  topCount.textContent = '0';
+
+  try {
+    const url = `${ITUNES_SEARCH}?term=top+hits+2024&media=music&limit=25&entity=song`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const body = await res.json();
+    const raw = body.results || [];
+    topTracks = raw.map(mapTrack).filter(t => t.previewUrl);
+    renderList(topList, topTracks, 'Belum ada data.');
+    topCount.textContent = topTracks.length;
+    console.log(`[Top] Loaded ${topTracks.length} tracks`);
+  } catch (e) {
+    console.error('Top error:', e);
+    topList.innerHTML = `
+      <div class="error-box">
+        <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm1 16h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+        <div>Gagal memuat: ${esc(e.message)}</div>
+        <button onclick="fetchTopTracks()">Coba Lagi</button>
+      </div>`;
+  } finally {
+    refreshBtn.classList.remove('spinning');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FETCH SEARCH
+   ═══════════════════════════════════════════════════════════ */
+async function searchMusic(query) {
+  const q = (query || '').trim();
+  if (!q) {
+    searchResults = [];
+    searchSection.style.display = 'none';
+    return;
+  }
+  searchSection.style.display = 'block';
+  searchList.innerHTML = `<div class="status"><div class="spinner"></div>Memuat...</div>`;
+  searchCount.textContent = '0';
+
+  try {
+    const url = `${ITUNES_SEARCH}?term=${encodeURIComponent(q)}&media=music&limit=40&entity=song`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const body = await res.json();
+    const raw = body.results || [];
+    searchResults = raw.map(mapTrack).filter(t => t.previewUrl);
+    if (searchResults.length === 0) {
+      searchList.innerHTML = `<div class="status">Tidak ada hasil untuk "${esc(q)}"</div>`;
+    } else {
+      renderList(searchList, searchResults, 'Tidak ada hasil.');
+    }
+    searchCount.textContent = searchResults.length;
+  } catch (e) {
+    console.error('Search error:', e);
+    searchList.innerHTML = `
+      <div class="error-box">
+        <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm1 16h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+        <div>Gagal mencari: ${esc(e.message)}</div>
+        <button onclick="searchMusic('${esc(q)}')">Coba Lagi</button>
+      </div>`;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER LIST
+   ═══════════════════════════════════════════════════════════ */
+function renderList(container, tracks, emptyMsg) {
+  if (!tracks || tracks.length === 0) {
+    container.innerHTML = `<div class="status">${esc(emptyMsg)}</div>`;
+    return;
+  }
+  container.innerHTML = tracks.map(t => trackCardHTML(t)).join('');
+  container.querySelectorAll('.track-card').forEach(card => {
+    const id = card.dataset.id;
+    card.addEventListener('click', (e) => {
+      e.stopPropagation();
+      unlockAudio(); // pastikan audio sudah di-unlock
+      const track = findTrackById(id);
+      if (track) togglePlay(track);
+    });
+  });
+}
+
+function trackCardHTML(t) {
+  const isActive = currentlyPlayingId === t.id;
+  const playing = isActive && isPlaying;
+
+  const thumbHTML = t.thumbnail
+    ? `<img src="${esc(t.thumbnail)}" alt="" onerror="this.outerHTML='<div class=\\'thumb-fallback\\'><svg viewBox=\\'0 0 24 24\\'><path d=\\'M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z\\'/></svg></div>'">`
+    : `<div class="thumb-fallback"><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></div>`;
+
+  const overlayIcon = playing
+    ? `<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05A4.5 4.5 0 0 0 16.5 12z"/></svg>`
+    : `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+
+  const playIconSVG = playing
+    ? `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+    : `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+
+  return `
+    <div class="track-card ${isActive ? 'active' : ''}" data-id="${esc(t.id)}">
+      <div class="thumb-wrap">
+        ${thumbHTML}
+        <div class="thumb-overlay">${overlayIcon}</div>
+      </div>
+      <div class="track-info">
+        <div class="track-title">${esc(t.title || 'Unknown')}</div>
+        <div class="track-artist">${esc(t.artist || 'Unknown Artist')}</div>
+        <div class="track-meta">
+          <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          <span>${fmtSec(t.duration)}</span>
+          ${t.album ? `<span class="dot"></span><span class="album">${esc(t.album)}</span>` : ''}
+        </div>
+      </div>
+      <button class="play-btn">${playIconSVG}</button>
+    </div>
+  `;
+}
+
+function findTrackById(id) {
+  return [...searchResults, ...topTracks].find(t => t.id === id);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOGGLE PLAY — DIPERBAIKI
+   ═══════════════════════════════════════════════════════════ */
+async function togglePlay(track) {
+  if (!track || !track.previewUrl) {
+    showToast('Preview audio tidak tersedia untuk lagu ini.');
+    return;
+  }
+
+  // Lagu sama → toggle
+  if (currentlyPlayingId === track.id) {
+    if (isPlaying) {
+      audio.pause();
+      isPlaying = false;
+    } else {
+      try {
+        const p = audio.play();
+        if (p && p.then) await p;
+        isPlaying = true;
+      } catch (e) {
+        console.error('Resume error:', e);
+        showToast('Gagal melanjutkan: ' + e.message);
+      }
+    }
+    updateAllUI();
+    return;
+  }
+
+  // Lagu baru
+  try {
+    console.log('[Play] Loading:', track.title, '→', track.previewUrl);
+
+    // Pause dulu
+    audio.pause();
+    audio.currentTime = 0;
+
+    // Set source baru
+    audio.src = track.previewUrl;
+    currentTrack = track;
+    currentlyPlayingId = track.id;
+
+    // Play TANPA await load() — langsung play()
+    const playPromise = audio.play();
+    if (playPromise && playPromise.then) {
+      await playPromise;
+    }
+
+    isPlaying = true;
+    showMiniPlayer();
+    updateAllUI();
+    console.log('[Play] ✅ Playing:', track.title);
+
+  } catch (e) {
+    console.error('[Play] ❌ Error:', e);
+    // Kalau error NotAllowedError → autoplay diblokir
+    if (e.name === 'NotAllowedError') {
+      showToast('Ketuk layar sekali lagi untuk memutar');
+      unlockBanner.classList.remove('hidden');
+    } else {
+      showToast('Gagal memutar: ' + e.message);
+    }
+    isPlaying = false;
+    updateAllUI();
+  }
+}
+
+function stopPlayer() {
+  audio.pause();
+  audio.currentTime = 0;
+  isPlaying = false;
+  currentlyPlayingId = null;
+  currentTrack = null;
+  miniPlayer.classList.remove('show');
+  updateAllUI();
+}
+
+function showMiniPlayer() {
+  if (!currentTrack) return;
+  miniTitle.textContent = currentTrack.title || '-';
+  miniArtist.textContent = currentTrack.artist || '-';
+
+  if (currentTrack.thumbnail) {
+    miniCoverWrap.innerHTML = `<img class="mini-thumb" src="${esc(currentTrack.thumbnail)}" alt="" onerror="this.outerHTML='<div class=\\'mini-thumb-fallback\\'><svg viewBox=\\'0 0 24 24\\'><path d=\\'M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z\\'/></svg></div>'">`;
+  } else {
+    miniCoverWrap.innerHTML = `<div class="mini-thumb-fallback"><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></div>`;
+  }
+  miniPlayer.classList.add('show');
+}
+
+function updateAllUI() {
+  if (isPlaying) {
+    miniPlayIcon.style.display = 'none';
+    miniPauseIcon.style.display = 'block';
+  } else {
+    miniPlayIcon.style.display = 'block';
+    miniPauseIcon.style.display = 'none';
+  }
+
+  document.querySelectorAll('.track-card').forEach(card => {
+    const id = card.dataset.id;
+    const t = findTrackById(id);
+    if (!t) return;
+    const isActive = currentlyPlayingId === t.id;
+    const playing = isActive && isPlaying;
+
+    card.classList.toggle('active', isActive);
+
+    const overlay = card.querySelector('.thumb-overlay');
+    if (overlay) {
+      overlay.innerHTML = playing
+        ? `<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05A4.5 4.5 0 0 0 16.5 12z"/></svg>`
+        : `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+    }
+
+    const btn = card.querySelector('.play-btn');
+    if (btn) {
+      btn.innerHTML = playing
+        ? `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+        : `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AUDIO EVENTS
+   ═══════════════════════════════════════════════════════════ */
+audio.addEventListener('timeupdate', () => {
+  if (audio.duration && !isNaN(audio.duration)) {
+    const pct = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = pct + '%';
+    curTimeEl.textContent = fmtMs(audio.currentTime * 1000);
+  }
+});
+
+audio.addEventListener('loadedmetadata', () => {
+  console.log('[Audio] Loaded, duration:', audio.duration);
+  durTimeEl.textContent = fmtMs(audio.duration * 1000);
+});
+
+audio.addEventListener('playing', () => {
+  console.log('[Audio] ▶️ Playing');
+  isPlaying = true;
+  updateAllUI();
+});
+
+audio.addEventListener('pause', () => {
+  console.log('[Audio] ⏸️ Paused');
+});
+
+audio.addEventListener('ended', () => {
+  console.log('[Audio] ⏹️ Ended');
+  isPlaying = false;
+  currentlyPlayingId = null;
+  currentTrack = null;
+  progressBar.style.width = '0%';
+  curTimeEl.textContent = '0:00';
+  miniPlayer.classList.remove('show');
+  updateAllUI();
+});
+
+audio.addEventListener('error', (e) => {
+  console.error('[Audio] ❌ Error:', audio.error);
+  let msg = 'Gagal memuat audio';
+  if (audio.error) {
+    switch(audio.error.code) {
+      case 1: msg = 'Audio dibatalkan'; break;
+      case 2: msg = 'Koneksi terputus'; break;
+      case 3: msg = 'Format tidak didukung / diblokir'; break;
+      case 4: msg = 'Sumber audio tidak bisa diputar'; break;
+    }
+  }
+  showToast(msg);
+  isPlaying = false;
+  updateAllUI();
+});
+
+/* ═══════════════════════════════════════════════════════════
+   MINI PLAYER
+   ═══════════════════════════════════════════════════════════ */
+miniPlayPause.addEventListener('click', () => {
+  if (!currentTrack) return;
+  unlockAudio();
+  togglePlay(currentTrack);
+});
+
+miniClose.addEventListener('click', stopPlayer);
+
+progressWrap.addEventListener('click', (e) => {
+  if (!audio.duration) return;
+  const rect = progressWrap.getBoundingClientRect();
+  const ratio = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = ratio * audio.duration;
+});
+
+/* ═══════════════════════════════════════════════════════════
+   SEARCH EVENTS
+   ═══════════════════════════════════════════════════════════ */
+searchInput.addEventListener('input', (e) => {
+  const val = e.target.value;
+  clearBtn.classList.toggle('show', val.length > 0);
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    if (val.trim()) searchMusic(val);
+    else {
+      searchResults = [];
+      searchSection.style.display = 'none';
+    }
+  }, 500);
+});
+
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    clearTimeout(debounceTimer);
+    searchMusic(e.target.value);
+    searchInput.blur();
+  }
+});
+
+clearBtn.addEventListener('click', () => {
+  searchInput.value = '';
+  clearBtn.classList.remove('show');
+  searchResults = [];
+  searchSection.style.display = 'none';
+  searchInput.focus();
+});
+
+refreshBtn.addEventListener('click', fetchTopTracks);
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════ */
+fetchTopTracks();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#061225">
+  <title>Our PKL Story — Kenangan & Music</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       1. VARIABLES & RESET
+       ========================================================= */
+    :root {
+      --bg: #030914;
+      --bg-soft: #07162a;
+      --panel: rgba(8, 27, 49, 0.82);
+      --panel-dark: rgba(4, 16, 31, 0.94);
+      --blue: #168cff;
+      --cyan: #52d5ff;
+      --white: #f4f8ff;
+      --muted: #8ea5c0;
+      --line: rgba(102, 185, 255, 0.16);
+      --danger: #ff637a;
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      color: var(--white);
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 8% -8%, rgba(0, 123, 255, 0.22), transparent 30%),
+        radial-gradient(circle at 95% 18%, rgba(0, 205, 255, 0.11), transparent 27%),
+        linear-gradient(145deg, var(--bg), var(--bg-soft) 55%, #020811);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(90, 170, 230, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(90, 170, 230, 0.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    button,
+    input { font: inherit; }
+    button { cursor: pointer; }
+    img { max-width: 100%; }
+
+    .container {
+      width: min(1150px, 92%);
+      margin: auto;
+    }
+
+    /* =========================================================
+       2. HEADER
+       ========================================================= */
+    .topbar {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      box-shadow: 0 0 30px rgba(22, 140, 255, 0.28);
+    }
+
+    .top-pill,
+    .counter {
+      border: 1px solid var(--line);
+      background: rgba(7, 24, 43, 0.75);
+      color: #a9dfff;
+      white-space: nowrap;
+    }
+
+    .top-pill {
+      padding: 8px 12px;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* =========================================================
+       3. HERO
+       ========================================================= */
+    .hero { padding: 10px 0 58px; }
+
+    .hero-photo {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: #061225;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+    }
+
+    .hero-photo img {
+      display: block;
+      width: 100%;
+      height: min(61vw, 600px);
+      min-height: 310px;
+      object-fit: cover;
+    }
+
+    .hero-photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        0deg,
+        rgba(2, 8, 18, 0.96),
+        rgba(2, 8, 18, 0.08) 65%,
+        transparent
+      );
+    }
+
+    .hero-content {
+      position: absolute;
+      z-index: 2;
+      left: clamp(20px, 5vw, 60px);
+      right: 20px;
+      bottom: 38px;
+      max-width: 780px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid rgba(82, 213, 255, 0.25);
+      border-radius: 99px;
+      color: #9bdfff;
+      background: rgba(2, 17, 32, 0.62);
+      backdrop-filter: blur(12px);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.7px;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    .now-title {
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    h1 {
+      margin-top: 14px;
+      font-size: clamp(40px, 7vw, 78px);
+      line-height: 0.94;
+      letter-spacing: -3.5px;
+    }
+
+    .hero-content p {
+      max-width: 680px;
+      margin-top: 15px;
+      color: #c3d3e6;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 19px;
+    }
+
+    .hero-btn {
+      padding: 10px 14px;
+      border: 1px solid rgba(120, 200, 255, 0.22);
+      border-radius: 12px;
+      color: #fff;
+      background: rgba(7, 25, 45, 0.8);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-btn.primary {
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--blue), #0962d7);
+    }
+
+    /* =========================================================
+       4. SECTION / FRIENDS
+       ========================================================= */
+    .section { padding-bottom: 68px; }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .kicker {
+      margin-bottom: 8px;
+      color: var(--cyan);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .section-head h2 {
+      font-size: clamp(27px, 4vw, 40px);
+      letter-spacing: -1.5px;
+    }
+
+    .section-head p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .counter {
+      padding: 11px 14px;
+      border-radius: 13px;
+      color: #cfe7ff;
+      font-size: 11px;
+    }
+
+    .memories {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .memory-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(12, 36, 63, 0.9), rgba(5, 18, 34, 0.96));
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.23);
+      transition: 0.28s ease;
+    }
+
+    .memory-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(82, 213, 255, 0.42);
+      box-shadow: 0 20px 50px rgba(0, 125, 255, 0.14);
+    }
+
+    .card-photo {
+      position: relative;
+      aspect-ratio: 1.15 / 1;
+      overflow: hidden;
+      background: linear-gradient(145deg, #0c2a49, #061325);
+    }
+
+    .empty-photo {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      color: #7693b0;
+    }
+
+    .empty-photo span {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 10px;
+      border: 1px dashed #456782;
+      border-radius: 18px;
+      color: #63caff;
+      font-size: 25px;
+    }
+
+    .empty-photo small { font-size: 10px; }
+
+    .card-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 7px 9px;
+      border: 1px solid rgba(130, 205, 255, 0.18);
+      border-radius: 9px;
+      color: #a8dcff;
+      background: rgba(2, 12, 24, 0.72);
+      font-size: 10px;
+      font-weight: 800;
+      backdrop-filter: blur(8px);
+    }
+
+    .card-body { padding: 15px 16px 17px; }
+    .card-body h3 { margin-bottom: 5px; font-size: 14px; }
+    .card-body p { color: var(--muted); font-size: 10px; }
+
+    .card-body::after {
+      content: "";
+      display: block;
+      width: 34px;
+      height: 2px;
+      margin-top: 14px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+    }
+
+    /* =========================================================
+       5. MUSIC SEARCH & PLAYER
+       ========================================================= */
+    .music-section { padding-bottom: 70px; }
+
+    .music-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 310px;
+      gap: 18px;
+    }
+
+    .music-panel,
+    .now-panel {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(10, 31, 54, 0.88), rgba(4, 16, 31, 0.94));
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(16px);
+    }
+
+    .music-panel { padding: 20px; }
+
+    .search-form {
+      display: flex;
+      gap: 9px;
+    }
+
+    .search-form input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px 16px;
+      border: 1px solid rgba(115, 190, 255, 0.16);
+      outline: none;
+      border-radius: 15px;
+      color: #fff;
+      background: rgba(2, 13, 26, 0.8);
+      font-size: 13px;
+    }
+
+    .search-form input:focus {
+      border-color: rgba(82, 213, 255, 0.48);
+      box-shadow: 0 0 0 4px rgba(82, 213, 255, 0.06);
+    }
+
+    .search-button {
+      width: 52px;
+      border: 0;
+      border-radius: 15px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), #075bc8);
+      box-shadow: 0 10px 25px rgba(23, 140, 255, 0.2);
+    }
+
+    .search-button:disabled { opacity: 0.55; cursor: wait; }
+
+    .search-info {
+      margin: 12px 2px 18px;
+      color: #728ba6;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .results {
+      display: grid;
+      gap: 9px;
+      max-height: 390px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .result {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: 15px;
+      background: rgba(6, 23, 42, 0.6);
+      transition: 0.2s;
+    }
+
+    .result:hover {
+      border-color: rgba(82, 213, 255, 0.2);
+      background: #0a2038;
+    }
+
+    .result-cover {
+      width: 54px;
+      height: 54px;
+      flex: 0 0 54px;
+      border-radius: 11px;
+      object-fit: cover;
+      background: #0c2743;
+    }
+
+    .result-info { min-width: 0; flex: 1; }
+    .result-title,
+    .result-artist { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .result-title { font-size: 12px; font-weight: 700; }
+    .result-artist { margin-top: 5px; color: var(--muted); font-size: 10px; }
+    .result-time { color: #6595bb; font-size: 9px; }
+
+    .result-play {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      border: 1px solid rgba(100, 190, 255, 0.16);
+      border-radius: 50%;
+      color: #6ed5ff;
+      background: #071c31;
+    }
+
+    .empty-music {
+      padding: 55px 20px;
+      color: #6f89a5;
+      text-align: center;
+      font-size: 11px;
+    }
+
+    .music-icon {
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      border: 1px solid rgba(82, 213, 255, 0.18);
+      border-radius: 20px;
+      color: #55cfff;
+      background: #071a2f;
+      font-size: 25px;
+    }
+
+    .loading {
+      display: none;
+      padding: 35px;
+      color: #70b8dc;
+      text-align: center;
+      font-size: 11px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      margin-right: 7px;
+      border: 2px solid #24577c;
+      border-top-color: #52d6ff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error {
+      display: none;
+      margin: 12px 0;
+      padding: 11px 12px;
+      border: 1px solid rgba(255, 99, 122, 0.2);
+      border-radius: 12px;
+      color: #ffb2bd;
+      background: #32111a;
+      font-size: 10px;
+    }
+
+    .now-panel {
+      align-self: start;
+      position: sticky;
+      top: 15px;
+      padding: 18px;
+    }
+
+    .cover {
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: 19px;
+      background: linear-gradient(135deg, #0b2948, #041120);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .cover img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .now-label {
+      margin-top: 16px;
+      color: var(--cyan);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.7px;
+      text-transform: uppercase;
+    }
+
+    .now-title {
+      overflow: hidden;
+      margin-top: 6px;
+      font-size: 20px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .now-artist {
+      overflow: hidden;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    audio { width: 100%; margin-top: 18px; }
+
+    .player-note {
+      margin-top: 10px;
+      color: #607993;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       6. QUOTE & FOOTER
+       ========================================================= */
+    .quote {
+      margin: 0 0 65px;
+      padding: 31px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(120deg, rgba(9, 32, 57, 0.8), rgba(5, 18, 34, 0.65));
+      text-align: center;
+    }
+
+    .quote strong { display: block; font-family: "Space Grotesk"; font-size: clamp(20px, 3vw, 28px); }
+    .quote span { display: block; margin-top: 8px; color: var(--muted); font-size: 11px; }
+    footer { border-top: 1px solid var(--line); padding: 27px 0 36px; color: #66809b; text-align: center; font-size: 10px; }
+
+    /* =========================================================
+       7. RESPONSIVE
+       ========================================================= */
+    @media (max-width: 900px) {
+      .music-shell { grid-template-columns: 1fr; }
+      .now-panel { position: relative; top: 0; }
+      .memories { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 560px) {
+      .container { width: 94%; }
+      .topbar { min-height: 65px; }
+      .top-pill { display: none; }
+      .hero { padding-top: 5px; padding-bottom: 43px; }
+      .hero-photo { border-radius: 21px; }
+      .hero-photo img { height: 82vw; min-height: 285px; }
+      .hero-content { left: 20px; right: 20px; bottom: 24px; }
+      h1 { font-size: 45px; letter-spacing: -2.5px; }
+      .hero-content p { font-size: 12px; }
+      .section-head { align-items: flex-start; flex-direction: column; }
+      .counter { align-self: flex-start; }
+      .memories { gap: 11px; }
+      .memory-card { border-radius: 16px; }
+      .card-body { padding: 12px; }
+      .card-body h3 { font-size: 12px; }
+      .card-body p { font-size: 9px; }
+      .music-panel { padding: 13px; }
+      .search-button { width: 47px; }
+      .now-panel { display: block; }
+      .now-label { margin-top: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">✦</div>
+        <span>OUR PKL STORY</span>
+      </div>
+      <div class="top-pill">2026 • MEMORY BOOK</div>
+    </header>
+
+    <main>
+      <!-- ===================================================
+           HERO / FOTO UTAMA
+           =================================================== -->
+      <section class="hero">
+        <div class="hero-photo">
+          <img src="assets/foto-pkl.jpg" alt="Foto bersama teman PKL">
+
+          <div class="hero-content">
+            <div class="eyebrow">✦ Kenangan yang tidak terlupakan</div>
+            <h1>Our Story.</h1>
+            <p>
+              Bukan cuma tentang PKL, tapi tentang orang-orang, tawa,
+              pengalaman, dan momen kecil yang akhirnya menjadi kenangan besar.
+            </p>
+
+            <div class="hero-actions">
+              <a class="hero-btn primary" href="#music">♫ Putar Musik</a>
+              <a class="hero-btn" href="#friends">15 Teman</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================
+           15 TEMAN
+           =================================================== -->
+      <section class="section" id="friends">
+        <div class="section-head">
+          <div>
+            <div class="kicker">The People</div>
+            <h2>15 Teman, Satu Cerita.</h2>
+            <p>Ganti nama dan foto di setiap kartu sesuai teman PKL.</p>
+          </div>
+          <div class="counter">15 PEOPLE • 1 MEMORY</div>
+        </div>
+
+        <!-- Kartu dibuat otomatis oleh JavaScript agar HTML tetap rapi. -->
+        <div class="memories" id="memories"></div>
+      </section>
+
+      <!-- ===================================================
+           MUSIC SEARCH
+           =================================================== -->
+      <section class="music-section" id="music">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Memory Soundtrack</div>
+            <h2>Music for Our Memories.</h2>
+            <p>Cari lagu, pilih hasilnya, lalu tekan play.</p>
+          </div>
+        </div>
+
+        <div class="music-shell">
+          <div class="music-panel">
+            <form class="search-form" id="searchForm">
+              <input
+                id="searchInput"
+                type="search"
+                autocomplete="off"
+                placeholder="Cari judul lagu atau nama artis..."
+              >
+              <button class="search-button" id="searchButton" type="submit" aria-label="Cari lagu">
+                ⌕
+              </button>
+            </form>
+
+            <div class="search-info">
+              Sumber utama menggunakan endpoint Spotify yang ada di kode Flutter kamu.
+              Jika API utama gagal, website otomatis mencoba iTunes Preview.
+            </div>
+
+            <div class="error" id="searchError"></div>
+            <div class="loading" id="searchLoading">
+              <span class="spinner"></span>
+              Sedang mencari lagu...
+            </div>
+
+            <div class="results" id="musicResults">
+              <div class="empty-music">
+                <div class="music-icon">♫</div>
+                Cari lagu favorit untuk soundtrack kenangan PKL.
+              </div>
+            </div>
+          </div>
+
+          <aside class="now-panel">
+            <div class="cover">
+              <img id="nowCover" src="assets/foto-pkl.jpg" alt="Cover lagu">
+            </div>
+
+            <div class="now-label">Now Playing</div>
+            <div class="now-title" id="nowTitle">Belum ada lagu</div>
+            <div class="now-artist" id="nowArtist">Pilih lagu dari hasil pencarian</div>
+
+            <audio id="audioPlayer" controls preload="none"></audio>
+
+            <div class="player-note">
+              Player memakai URL audio yang dikembalikan API.
+              Fallback iTunes menggunakan preview lagu.
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ===================================================
+           QUOTE
+           =================================================== -->
+      <section class="quote">
+        <strong>“Waktu boleh berlalu, kenangannya tetap di sini.”</strong>
+        <span>— Our PKL Memories</span>
+      </section>
+    </main>
+
+    <footer>Made with memories • PKL 2026</footer>
+  </div>
+
+  <script>
+    /* =========================================================
+       1. DATA 15 TEMAN
+       Ganti name dan photo kalau nanti mau memasukkan foto.
+       ========================================================= */
+    const friends = Array.from({ length: 15 }, (_, index) => {
+      const number = String(index + 1).padStart(2, "0");
+
+      return {
+        number,
+        name: `Nama Teman ${number}`,
+        role: "Teman PKL • 2026"
+      };
+    });
+
+    const memories = document.getElementById("memories");
+
+    memories.innerHTML = friends
+      .map(
+        (friend) => `
+          <article class="memory-card">
+            <div class="card-photo">
+              <div class="empty-photo">
+                <span>＋</span>
+                <small>Tambah Foto</small>
+              </div>
+              <div class="card-number">${friend.number}</div>
+            </div>
+
+            <div class="card-body">
+              <h3>${friend.name}</h3>
+              <p>${friend.role}</p>
+            </div>
+          </article>
+        `
+      )
+      .join("");
+
+    /* =========================================================
+       2. KONFIGURASI MUSIC API
+       API utama mengikuti spotify.dart yang kamu upload:
+       /downloader/spotifyplay?q=...
+       ========================================================= */
+    const MUSIC_API =
+      "https://api.deline.web.id/downloader/spotifyplay?q=";
+
+    const ITUNES_API =
+      "https://itunes.apple.com/search?entity=song&limit=12&term=";
+
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+    const searchButton = document.getElementById("searchButton");
+    const searchLoading = document.getElementById("searchLoading");
+    const searchError = document.getElementById("searchError");
+    const musicResults = document.getElementById("musicResults");
+
+    const audioPlayer = document.getElementById("audioPlayer");
+    const nowCover = document.getElementById("nowCover");
+    const nowTitle = document.getElementById("nowTitle");
+    const nowArtist = document.getElementById("nowArtist");
+
+    let currentTracks = [];
+
+    /* =========================================================
+       3. HELPER MUSIC
+       ========================================================= */
+    function setLoading(isLoading) {
+      searchLoading.style.display = isLoading ? "block" : "none";
+      searchButton.disabled = isLoading;
+    }
+
+    function showError(message) {
+      searchError.textContent = message;
+      searchError.style.display = "block";
+    }
+
+    function clearError() {
+      searchError.textContent = "";
+      searchError.style.display = "none";
+    }
+
+    function formatDuration(seconds) {
+      const total = Math.floor(Number(seconds) || 0);
+      const minutes = Math.floor(total / 60);
+      const remaining = total % 60;
+
+      return `${minutes}:${String(remaining).padStart(2, "0")}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (character) => {
+        const entities = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        };
+
+        return entities[character];
+      });
+    }
+
+    /* =========================================================
+       4. PARSE RESPONSE API UTAMA
+       Struktur dari spotify.dart:
+       result.dlink
+       result.metadata.cover
+       result.metadata.title
+       result.metadata.artist
+       result.metadata.duration
+       ========================================================= */
+    function parseMusicApi(data) {
+      if (!data || data.status !== true || !data.result) {
+        return [];
+      }
+
+      const result = data.result;
+      const metadata = result.metadata || {};
+
+      const track = {
+        title: metadata.title || "Unknown Title",
+        artist: metadata.artist || "Unknown Artist",
+        cover: metadata.cover || "",
+        duration: metadata.duration || "",
+        audio: result.dlink || "",
+        source: "API"
+      };
+
+      return track.audio ? [track] : [];
+    }
+
+    /* =========================================================
+       5. SEARCH API UTAMA
+       ========================================================= */
+    async function searchMusicApi(query) {
+      const response = await fetch(
+        MUSIC_API + encodeURIComponent(query),
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json"
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`API utama HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      return parseMusicApi(data);
+    }
+
+    /* =========================================================
+       6. FALLBACK iTUNES
+       Dipakai kalau API utama sedang error / CORS / kosong.
+       iTunes memberikan preview audio.
+       ========================================================= */
+    async function searchITunes(query) {
+      const response = await fetch(
+        ITUNES_API + encodeURIComponent(query)
+      );
+
+      if (!response.ok) {
+        throw new Error(`iTunes HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      return (data.results || [])
+        .map((item) => ({
+          title: item.trackName || "Unknown Title",
+          artist: item.artistName || "Unknown Artist",
+          cover: item.artworkUrl100
+            ? item.artworkUrl100.replace("100x100", "600x600")
+            : "",
+          duration: item.trackTimeMillis
+            ? formatDuration(item.trackTimeMillis / 1000)
+            : "",
+          audio: item.previewUrl || "",
+          source: "iTunes Preview"
+        }))
+        .filter((track) => track.audio);
+    }
+
+    /* =========================================================
+       7. RENDER HASIL SEARCH
+       ========================================================= */
+    function renderTracks(tracks) {
+      currentTracks = tracks;
+
+      if (!tracks.length) {
+        musicResults.innerHTML = `
+          <div class="empty-music">
+            <div class="music-icon">⌕</div>
+            Lagu tidak ditemukan. Coba kata kunci lain.
+          </div>
+        `;
+        return;
+      }
+
+      musicResults.innerHTML = tracks
+        .map(
+          (track, index) => `
+            <div class="result" data-index="${index}">
+              <img
+                class="result-cover"
+                src="${escapeHtml(track.cover || "assets/foto-pkl.jpg")}"
+                alt="Cover lagu"
+                loading="lazy"
+              >
+
+              <div class="result-info">
+                <div class="result-title">${escapeHtml(track.title)}</div>
+                <div class="result-artist">
+                  ${escapeHtml(track.artist)}
+                  ${track.source === "iTunes Preview" ? " • Preview" : ""}
+                </div>
+              </div>
+
+              <div class="result-time">
+                ${escapeHtml(track.duration)}
+              </div>
+
+              <button
+                class="result-play"
+                type="button"
+                aria-label="Putar lagu"
+              >
+                ▶
+              </button>
+            </div>
+          `
+        )
+        .join("");
+    }
+
+    /* =========================================================
+       8. PLAY TRACK
+       ========================================================= */
+    function playTrack(track) {
+      if (!track || !track.audio) {
+        showError("Audio lagu ini tidak tersedia.");
+        return;
+      }
+
+      clearError();
+
+      nowTitle.textContent = track.title;
+      nowArtist.textContent =
+        track.artist +
+        (track.source === "iTunes Preview" ? " • Preview" : "");
+
+      nowCover.src = track.cover || "assets/foto-pkl.jpg";
+      audioPlayer.src = track.audio;
+      audioPlayer.load();
+
+      audioPlayer.play().catch(() => {
+        // Browser dapat memblokir autoplay.
+        // Kontrol audio tetap tersedia untuk menekan Play manual.
+      });
+    }
+
+    musicResults.addEventListener("click", (event) => {
+      const result = event.target.closest(".result");
+      if (!result) return;
+
+      const index = Number(result.dataset.index);
+      playTrack(currentTracks[index]);
+    });
+
+    /* =========================================================
+       9. SEARCH EVENT
+       ========================================================= */
+    searchForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const query = searchInput.value.trim();
+
+      if (!query) {
+        searchInput.focus();
+        return;
+      }
+
+      clearError();
+      setLoading(true);
+
+      musicResults.innerHTML = "";
+      currentTracks = [];
+
+      let tracks = [];
+
+      try {
+        // Prioritas pertama: API yang dipakai spotify.dart.
+        tracks = await searchMusicApi(query);
+      } catch (error) {
+        console.warn("API utama gagal:", error);
+      }
+
+      if (!tracks.length) {
+        try {
+          // Fallback supaya search tetap punya sumber preview musik.
+          tracks = await searchITunes(query);
+        } catch (error) {
+          console.warn("Fallback iTunes gagal:", error);
+        }
+      }
+
+      setLoading(false);
+      renderTracks(tracks);
+
+      if (!tracks.length) {
+        showError(
+          "Pencarian gagal. API utama dan fallback tidak mengembalikan audio. Coba lagi."
+        );
+      }
+    });
+  </script>
+
+  <div style="position:fixed;right:16px;bottom:16px;z-index:9999;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+    <a href="music.html" style="padding:10px 14px;border-radius:12px;background:#111827;color:#fff;text-decoration:none;font-weight:700;border:1px solid rgba(255,255,255,.15)">♫ Music</a>
+    <a href="jadwal_sholat_page.html" style="padding:10px 14px;border-radius:12px;background:#111827;color:#fff;text-decoration:none;font-weight:700;border:1px solid rgba(255,255,255,.15)">☾ Jadwal Sholat</a>
+  </div>
+</body>
+</html>
