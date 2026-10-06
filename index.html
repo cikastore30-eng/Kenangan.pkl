@@ -293,6 +293,58 @@
       background: linear-gradient(145deg, #0c2a49, #061325);
     }
 
+
+    .friend-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .photo-upload {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      z-index: 4;
+      display: flex;
+      justify-content: center;
+    }
+
+    .photo-upload label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 11px;
+      border: 1px solid rgba(130, 205, 255, 0.25);
+      border-radius: 10px;
+      color: #d7efff;
+      background: rgba(2, 12, 24, 0.78);
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .photo-upload label:hover {
+      border-color: rgba(82, 213, 255, 0.6);
+      background: rgba(4, 28, 52, 0.9);
+    }
+
+    .photo-upload input { display: none; }
+
+    .photo-file-name {
+      margin-top: 8px;
+      color: #7191ad;
+      font-size: 8px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
     .empty-photo {
       position: absolute;
       inset: 0;
@@ -695,7 +747,8 @@
       return {
         number,
         name: `Nama Teman ${number}`,
-        role: "Teman PKL • 2026"
+        role: "Teman PKL • 2026",
+        photo: `assets/teman-${number}.jpg`
       };
     });
 
@@ -706,21 +759,67 @@
         (friend) => `
           <article class="memory-card">
             <div class="card-photo">
-              <div class="empty-photo">
+              <img
+                class="friend-photo"
+                src="${friend.photo}"
+                alt="Foto ${friend.name}"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+              >
+
+              <div class="empty-photo" style="display:none;">
                 <span>＋</span>
-                <small>Tambah Foto</small>
+                <small>Taruh ${friend.photo}</small>
               </div>
+
+              <div class="photo-upload">
+                <label>
+                  📷 Pilih JPG
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,image/jpeg"
+                    data-friend="${friend.number}"
+                  >
+                </label>
+              </div>
+
               <div class="card-number">${friend.number}</div>
             </div>
 
             <div class="card-body">
               <h3>${friend.name}</h3>
               <p>${friend.role}</p>
+              <div class="photo-file-name">File: ${friend.photo}</div>
             </div>
           </article>
         `
       )
       .join("");
+
+    // Preview JPG yang dipilih dari HP/komputer.
+    // File asli untuk website tetap menggunakan:
+    // assets/teman-01.jpg ... assets/teman-15.jpg
+    document.querySelectorAll(".photo-upload input").forEach((input) => {
+      input.addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        if (!/^image\/jpeg$/i.test(file.type) && !/\.(jpe?g)$/i.test(file.name)) {
+          alert("Mohon pilih file JPG/JPEG.");
+          event.target.value = "";
+          return;
+        }
+
+        const card = input.closest(".memory-card");
+        const img = card.querySelector(".friend-photo");
+        const empty = card.querySelector(".empty-photo");
+        const fileName = card.querySelector(".photo-file-name");
+
+        img.src = URL.createObjectURL(file);
+        img.style.display = "block";
+        empty.style.display = "none";
+        fileName.textContent = `Dipilih: ${file.name}`;
+      });
+    });
 
     /* =========================================================
        2. KONFIGURASI MUSIC API
