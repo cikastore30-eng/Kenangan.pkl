@@ -13,7 +13,7 @@
    Pastikan link foto adalah URL JPG/JPEG yang bisa dibuka publik.
    ========================================================= */
 window.FRIENDS = [
-  { number: "01", name: "Devin 01", role: "Teman PKL • 2026", photo: "https://files.catbox.moe/0h56z0.jpg" },
+  { number: "01", name: "Nama Teman 01", role: "Teman PKL • 2026", photo: "https://example.com/teman-02.jpg" },
   { number: "02", name: "Nama Teman 02", role: "Teman PKL • 2026", photo: "https://example.com/teman-02.jpg" },
   { number: "03", name: "Nama Teman 03", role: "Teman PKL • 2026", photo: "https://example.com/teman-03.jpg" },
   { number: "04", name: "Nama Teman 04", role: "Teman PKL • 2026", photo: "https://example.com/teman-04.jpg" },
